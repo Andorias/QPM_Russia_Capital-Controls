@@ -1,0 +1,351 @@
+% Квартальная прогнозная модель с Capital Controls (Пока без бюджета)
+
+!transition_variables
+
+'1 ' 'Real GDP (100*log)'                                               L_GDP
+'2 ' 'Real GDP trend(100*log)'                                          L_GDP_bar
+'3 ' 'Output gap (in %)'                                                L_GDP_gap
+'4 ' 'Real GDP growth QoQ (in % pa)'                                    D_L_GDP
+'5 ' 'Real GDP growth YoY (in % pa)'                                    D4_L_GDP
+'6 ' 'Real GDP trend growth QoQ annualized (in % pa)'                   D_L_GDP_bar
+
+%'7' 'Domestic Demand (Comsumption + Investments) (100*log)'             L_D
+'8' 'Domestic Demand (Comsumption + Investments) gap (in %)'            L_D_gap
+%'9' 'Domestic Demand (Comsumption + Investments) trend (100*log)'       L_D_bar
+%'10' 'Demand growth QoQ (in % pa)'                                      D_L_D
+%'11' 'Demand growth YoY (in % pa)'                                      D4_L_D
+%'12' 'Demand trend growth QoQ annualized (in % pa)'                     D_L_D_bar
+
+%'13' 'Export (100*log)'                                                 L_Ex
+'14' 'Export gap (in %)'                                                L_Ex_gap
+%'15' 'Export trend (100*log)'                                           L_Ex_bar
+%'16' 'Export growth QoQ (in % pa)'                                      D_L_Ex
+%'17' 'Export growth YoY (in % pa)'                                      D4_L_Ex
+%'18' 'Export trend growth QoQ annualized (in % pa)'                     D_L_Ex_bar
+
+%'19' 'Import (100*log)'                                                 L_Im
+'20' 'Import gap (in %)'                                                L_Im_gap
+%'21' 'Import trend (100*log)'                                           L_Im_bar
+%'22' 'Import growth QoQ (in % pa)'                                      D_L_Im
+%'23' 'Import growth YoY (in % pa)'                                      D4_L_Im
+%'24' 'Import trend growth QoQ annualized (in % pa)'                     D_L_Im_bar
+
+'25' 'Budget Stimulus'                                                  BUDG
+
+'26' 'CPI (level, 100*log)'                                             L_CPI
+'27' 'CPI Inflation QoQ annualized (in % pa)'                           D_L_CPI
+%'28' 'Expected CPI Inflation QoQ annualized (in % pa)'                  E_D_L_CPI
+'29' 'CPI Inflation YoY (in % pa)'                                      D4_L_CPI
+'30' 'Inflation Target (in % pa)'                                       D4_L_CPI_tar
+
+'31' 'Core CPI (level, 100*log)'                                        L_CPI_core
+'32' 'Core CPI QoQ annualized (in % pa)'                                D_L_CPI_core
+'33' 'Expected Core CPI QoQ annualized (in % pa)'                       E_D_L_CPI_core
+'34' 'Core CPI YoY (in % pa)'                                           D4_L_CPI_core
+
+'35' 'Volatility components in CPI (level, 100*log)'                    L_CPI_vol
+'36' 'Volatility components in CPI QoQ annualized (in % pa)'            D_L_CPI_vol
+%'37' 'Expected Volatility components in CPI QoQ annualized (in % pa)'   E_D_L_CPI_vol
+'38' 'Core CPI YoY (in % pa)'                                           D4_L_CPI_vol
+
+'39' 'Key Rate (in % pa)'                                               KR
+'40' 'Real Interest Rate (in % pa)'                                     RR
+'41' 'Real Interest Rate trend (in % pa)'                               RR_bar
+'42' 'Real Interest Rate gap (in %)'                                    RR_gap
+'43' 'Neutral Interest Rate (in % pa)'                                  KR_n
+
+'44' 'Market interest Rate (in % pa)'                                   I_m
+'45' 'Real Market Interest Rate (in % pa)'                              RR_m
+'46' 'Real Market Interest Rate trend (in % pa)'                        RR_m_bar
+'47' 'Real Market Interest Rate gap (in %)'                             RR_m_gap
+'48' 'Market Risk Premium (in % pa)'                                    RPM
+'49' 'Market Risk Premium trend (in % pa)'                              RPM_bar
+'50' 'Market Risk Premium gap (in % pa)'                                RPM_gap
+
+'51' 'Nominal Exchange Rate (LC/FC, 100*log)'                           L_S
+'52' 'Nominal Exchange Rate QoQ annualized (in % pa)'                   D_L_S
+'53' 'Nominal Exchange Rate YoY (in % pa)'                              D4_L_S
+'54' 'Country Risk Premium (in % pa)'                                   RP
+'55' 'Capital Control Measure: from 0 (Mobility) to 1 (Autarky)'        w_cc
+
+'56' 'Real Exchange Rate (level, 100*log)'                              L_Z
+'57' 'Real Exchange Rate trend (level, 100*log)'                        L_Z_bar
+'58' 'Real Exchange Rate gap (in %)'                                    L_Z_gap
+'59' 'Real Exchange Rate QoQ annualized (in % pa)'                      D_L_Z
+'60' 'Nominal Exchange Rate YoY (in % pa)'                              D4_L_Z
+'61' 'Trend Real Exchange Rate QoQ annualized(in % pa)'                 D_L_Z_bar
+
+'62' 'Urals Price (100*log)'                                            L_Poil
+'63' 'Real Urals Price - Terms of Trade'                                L_ToT
+'64' 'Real Urals Price trend - Terms of Trade trend'                    L_ToT_bar
+'65' 'Real Urals Price gap - Terms of Trade gap'                        L_ToT_gap
+'66' 'Real Urals Price trend growth - Terms of Trade trend growth'      D_L_ToT_bar
+
+'67' 'Foreign Output Gap (in %)'                                        L_GDP_f_gap
+'68' 'Foreign Nominal Interest Rate (in % pa)'                          NR_f
+'69' 'Foreign Real Interest Rate (in % pa)'                             RR_f 
+'70' 'Foreign Real Interest Rate Trend (in % pa)'                       RR_f_bar
+'71' 'Foreign Real Interest Rate Gap (in %)'                            RR_f_gap
+'72' 'Foreign CPI (level, 100*log)'                                     L_CPI_f
+'73' 'Foreign Inflation QoQ annualized (in % pa)'                       D_L_CPI_f
+
+
+% ------------------------------------------------------------------------------- %
+
+
+!transition_shocks
+
+%'1 ' 'Shock: Output gap (demand)'                                       shk_L_GDP_gap
+'2 ' 'Shock: Demand gap'                                                shk_L_D_gap
+'3 ' 'Shock: Export gap'                                                shk_L_Ex_gap
+'4 ' 'Shock: Import gap'                                                shk_L_Im_gap
+
+'5 ' 'Shock: Potential GDP growth'                                      shk_D_L_GDP_bar
+'6 ' 'Shock: Demand trend'                                              shk_D_L_D_bar
+'7 ' 'Shock: Export trend'                                              shk_D_L_Ex_bar
+'8 ' 'Shock: Import trend'                                              shk_D_L_Im_bar
+
+'9 ' 'Shock: Budget Stimulus'                                           shk_budg
+
+%'10' 'Shock: CPI inflation (cost-push)'                                 shk_D_L_CPI 
+'11' 'Shock: CPI core'                                                  shk_D_L_CPI_core
+'12' 'Shock: CPI vol'                                                   shk_D_L_CPI_vol
+'13' 'Shock: Inflation target'                                          shk_D4_L_CPI_tar
+
+'14' 'Shock: Interest rate (monetary policy)'                           shk_KR 
+'15' 'Shock: Real interest rate'                                        shk_RR_bar 
+'16' 'Shock: LR Market Risk Premium'                                    shk_RPM_bar
+'17' 'Shock: SR Market Risk Premium'                                    shk_RPM_gap
+'18' 'Shock: Market Interest Rate'                                      shk_i_m
+
+'19' 'Shock: Exchange rate (UIP)'                                       shk_L_S 
+'20' 'Shock: Real exchange rate depreciation'                           shk_D_L_Z_bar 
+'21' 'Shock: Capital Control'                                           shk_w_cc
+
+'22' 'Shock: LR Real Oil Price'                                         shk_D_L_ToT_bar
+'23' 'Shock: SR Real Oil Price'                                         shk_L_ToT_gap 
+
+'24' 'Shock: Foreign output gap'                                        shk_L_GDP_f_gap 
+'25' 'Shock: Foreign nominal interest rate'                             shk_NR_f 
+'26' 'Shock: Foreign inflation'                                         shk_D_L_CPI_f 
+'27' 'Shock: Foreign real interest rate'                                shk_RR_f_bar
+
+
+% ------------------------------------------------------------------------------- %
+
+
+!parameters
+
+w_d w_ex w_im
+d_lag d_lead d_r d_Poil d_z d_budg %d_l
+x_lag x_f x_z x_Poil
+m_lag m_d m_z
+rho_budg
+
+rho_D_L_GDP_bar     ss_D_L_GDP_bar
+%rho_D_L_D_bar      %ss_D_L_D_bar
+%rho_D_L_Ex_bar     %ss_D_L_Ex_bar
+%rho_D_L_Im_bar     %ss_D_L_Im_bar
+
+w_cpi_core
+a_calvo_core a_gdp_core a_z_core
+w_r_cpi_core
+rho_cpi_vol
+rho_D4_L_CPI_tar ss_D4_L_CPI_tar
+
+p_lag p_inf p_gdp
+w_i_m
+rho_RPM_gap
+rho_RR_bar          ss_RR_bar 
+rho_RPM_bar         ss_RPM_bar
+
+%w_cc 
+w_r_s
+w_cab s_cab s_Poil
+rho_w_cc
+rho_D_L_Z_bar       ss_D_L_Z_bar 
+
+rho_L_ToT_gap
+rho_D_L_ToT_bar   ss_D_L_ToT_bar
+
+rho_L_GDP_f_gap
+rho_NR_f 
+rho_D_L_CPI_f       ss_D_L_CPI_f
+rho_RR_f_bar        ss_RR_f_bar
+
+%% ------------------------------------------------------------------------------- %
+
+
+!transition_equations
+
+%% ==================================== GDP ========================================
+
+%% === GAPs ===
+L_GDP_gap   = w_d*L_D_gap + w_ex*L_Ex_gap + w_im*L_Im_gap;
+L_D_gap     = d_lag*L_D_gap{-1} + d_lead*L_D_gap{+1} + d_r*RR_m_gap{-1} + d_Poil*L_ToT_gap + d_z*L_Z_gap + d_budg*BUDG + shk_L_D_gap; %d_l*L_L_gap
+L_Ex_gap    = x_lag*L_Ex_gap{-1} + x_f*L_GDP_f_gap + x_z*L_Z_gap + x_Poil*L_ToT_gap + shk_L_Ex_gap;
+L_Im_gap    = m_lag*L_Im_gap{-1} + m_d*L_D_gap + m_z*L_Z_gap + shk_L_Im_gap;
+BUDG        = rho_budg*BUDG{-1} + shk_budg;
+
+%% === TRENDs ===
+%D_L_D_bar   = rho_D_L_D_bar*D_L_D_bar{-1} + (1-rho_D_L_D_bar)*ss_D_L_D_bar + shk_D_L_D_bar;
+%D_L_Ex_bar  = rho_D_L_Ex_bar*D_L_Ex_bar{-1} + (1-rho_D_L_Ex_bar)*ss_D_L_Ex_bar + shk_D_L_Ex_bar;
+%D_L_Im_bar  = rho_D_L_Im_bar*D_L_Im_bar{-1} + (1-rho_D_L_Im_bar)*ss_D_L_Im_bar + shk_D_L_Im_bar;
+%D_L_GDP_bar = rho_D_L_GDP_bar*(w_d*D_L_D_bar{-1}+w_ex*D_L_Ex_bar{-1}+w_im*D_L_Im_bar{-1}) + (1-rho_D_L_GDP_bar)*ss_D_L_GDP_bar + shk_D_L_GDP_bar;
+D_L_GDP_bar = rho_D_L_GDP_bar*D_L_GDP_bar{-1} + (1-rho_D_L_GDP_bar)*ss_D_L_GDP_bar + shk_D_L_GDP_bar;
+
+%% === Identities ===
+D_L_GDP = 4*(L_GDP - L_GDP{-1});    D4_L_GDP = L_GDP - L_GDP{-4};    D_L_GDP_bar = 4*(L_GDP_bar - L_GDP_bar{-1});    L_GDP_gap = L_GDP - L_GDP_bar;     
+%D_L_D   = 4*(L_D - L_D{-1});        D4_L_D   = L_D - L_D{-4};        D_L_D_bar   = 4*(L_D_bar - L_D_bar{-1});        L_D_gap   = L_D - L_D_bar;
+%D_L_Ex  = 4*(L_Ex - L_Ex{-1});      D4_L_Ex  = L_Ex - L_Ex{-4};      D_L_Ex_bar  = 4*(L_Ex_bar - L_Ex_bar{-1});      L_Ex_gap  = L_Ex - L_Ex_bar;
+%D_L_Im  = 4*(L_Im - L_Im{-1});      D4_L_Im  = L_Im - L_Im{-4};      D_L_Im_bar  = 4*(L_Im_bar - L_Im_bar{-1});      L_Im_gap  = L_Im - L_Im_bar;
+
+
+
+%% ================================ Inflation ======================================
+
+%% === The Phillips Curve ===
+D_L_CPI         = w_cpi_core*D_L_CPI_core + (1-w_cpi_core)*D_L_CPI_vol;
+D_L_CPI_core    =  a_calvo_core*D4_L_CPI_core{-1} + (1-a_calvo_core)*E_D_L_CPI_core + a_gdp_core*L_GDP_gap{-1} + a_z_core*(L_Z_gap-L_Z_gap{-1}) + shk_D_L_CPI_core;
+D_L_CPI_vol     =  rho_cpi_vol*D_L_CPI_vol{-1} + shk_D_L_CPI_vol;
+
+%% === Inflation Expectations ===
+%E_D_L_CPI_core = w_r_cpi_core*D_L_CPI_core{+1} + (1-w_r_cpi_core)*D_L_CPI_core{-1};
+E_D_L_CPI_core = w_r_cpi_core*D4_L_CPI_core{+4} + (1-w_r_cpi_core)*D4_L_CPI_core{-1};
+
+%% === TRENDs ===
+D4_L_CPI_tar = rho_D4_L_CPI_tar*D4_L_CPI_tar{-1} + (1-rho_D4_L_CPI_tar)*ss_D4_L_CPI_tar + shk_D4_L_CPI_tar;
+
+%% === Identities ===
+D_L_CPI      = 4*(L_CPI - L_CPI{-1});               D4_L_CPI        = L_CPI - L_CPI{-4};
+D_L_CPI_core = 4*(L_CPI_core - L_CPI_core{-1});     D4_L_CPI_core   = L_CPI_core - L_CPI_core{-4};
+D_L_CPI_vol  = 4*(L_CPI_vol - L_CPI_vol{-1});       D4_L_CPI_vol    = L_CPI_vol - L_CPI_vol{-4};
+
+
+
+%% ============================ Interest Rates Structure ==============================
+
+%% === Forward-looking Taylor-type Rule ===
+KR      = p_lag*KR{-1} + (1-p_lag)*(KR_n + p_inf*(D4_L_CPI{+3} - D4_L_CPI_tar{+3}) + p_gdp*L_GDP_gap) + shk_KR;
+KR_n    = RR_bar + D4_L_CPI{+3};
+
+%% === Market interest rate ===
+I_m = w_i_m*I_m{-1} + (1-w_i_m)*((KR+KR{+1}+KR{+2}+KR{+3})/4+RPM)+shk_i_m;
+RPM_gap = rho_RPM_gap*RPM_gap{-1} + shk_RPM_gap;
+
+%% === TRENDs ===
+RR_bar      = RR_f_bar + RP + D_L_Z_bar{+1};
+RR_bar      = rho_RR_bar*RR_bar{-1} + (1-rho_RR_bar)*ss_RR_bar + shk_RR_bar;
+RPM_bar     = rho_RPM_bar{-1}*RPM_bar{-1} + (1-rho_RPM_bar)*ss_RPM_bar + shk_RPM_bar;
+RR_m_bar    = RR_bar + RPM_bar;
+
+%% === Identities ===
+RR      = KR - D4_L_CPI{+1};    RR_gap      = RR - RR_bar;
+RR_m    = I_m - D4_L_CPI{+1};   RR_m_gap    = RR_m - RR_m_bar;
+RPM_gap = RPM - RPM_bar;
+
+
+
+%% ==============================  Exchange Rate =====================================
+
+%% === Modified Uncovered Interest Rate Parity (UIP) condition ===
+%L_S = (1-w_cc)*(w_r_s*L_S{+1} + (1-w_r_s)*(L_S{-1} + 2/4*(D4_L_CPI_tar - ss_D_L_CPI_f + D_L_Z_bar)) + (-KR + NR_f + RP)/4)...
+%     + w_cc*((1-w_cab)*L_S{-1} + s_cab*(L_Ex_gap-L_Im_gap+s_Poil*L_ToT_gap)/4) + shk_L_S;
+L_Z_gap = (1-w_cc)*(w_r_s*L_Z_gap{+1} + (1-w_r_s)*L_Z_gap{-1} + (RR_f_gap - RR_gap + RP)/4)...
+        + w_cc*((1-w_cab)*L_Z_gap{-1} + s_cab*(L_Ex_gap-L_Im_gap+s_Poil*L_ToT_gap)/4) + shk_L_S;
+w_cc    = rho_w_cc*w_cc{-1} + shk_w_cc;
+
+%% === TRENDs ===
+D_L_Z_bar   = rho_D_L_Z_bar*D_L_Z_bar{-1} + (1-rho_D_L_Z_bar)*ss_D_L_Z_bar + shk_D_L_Z_bar;
+
+%% === Identities ===
+L_Z     = L_S + L_CPI_f - L_CPI;
+D_L_Z   = 4*(L_Z - L_Z{-1});        D4_L_Z      = L_Z - L_Z{-4};    D_L_Z_bar   = 4*(L_Z_bar - L_Z_bar{-1});    L_Z_gap   = L_Z - L_Z_bar;
+D_L_S   = 4*(L_S - L_S{-1});        D4_L_S      = L_S - L_S{-4};
+
+
+
+%% ============================== Foreign Sector =====================================
+
+%% === Oil Price ===
+L_ToT = L_Poil - L_CPI_f;
+
+L_ToT_gap = rho_L_ToT_gap*L_ToT_gap{-1} + shk_L_ToT_gap;
+D_L_ToT_bar = rho_D_L_ToT_bar*D_L_ToT_bar{-1} + (1-rho_D_L_ToT_bar)*ss_D_L_ToT_bar + shk_D_L_ToT_bar;
+
+L_ToT_gap = L_ToT - L_ToT_bar;
+D_L_ToT_bar = 4*(L_ToT_bar - L_ToT_bar{-1});
+
+%% === Economy ===
+L_GDP_f_gap = rho_L_GDP_f_gap*L_GDP_f_gap{-1} + shk_L_GDP_f_gap;
+D_L_CPI_f   = rho_D_L_CPI_f*D_L_CPI_f{-1} + (1-rho_D_L_CPI_f)*ss_D_L_CPI_f + shk_D_L_CPI_f;
+NR_f        = rho_NR_f*NR_f{-1} + (1-rho_NR_f)*(RR_f_bar + D_L_CPI_f) + shk_NR_f;
+RR_f_bar    = rho_RR_f_bar*RR_f_bar{-1} + (1-rho_RR_f_bar)*ss_RR_f_bar + shk_RR_f_bar;
+RR_f        = NR_f - D_L_CPI_f{1};
+RR_f_gap    = RR_f - RR_f_bar;
+D_L_CPI_f   = 4*(L_CPI_f - L_CPI_f{-1});
+
+%% ------------------------------------------------------------------------------- %
+
+
+!measurement_variables
+OBS_L_GDP
+%OBS_L_D
+%OBS_L_Ex
+%OBS_L_Im
+OBS_BUDG
+
+OBS_L_CPI
+OBS_L_CPI_core
+%OBS_L_CPI_vol
+OBS_D4_L_CPI_tar
+
+OBS_KR
+OBS_I_m
+
+OBS_L_S
+OBS_w_cc
+
+OBS_L_Poil
+
+OBS_L_GDP_f_gap
+OBS_D_L_CPI_f 
+OBS_NR_f
+
+
+!measurement_equations
+OBS_L_GDP       = L_GDP;
+%OBS_L_D        = L_D;
+%OBS_L_Ex       = L_Ex;
+%OBS_L_Im       = L_Im;
+OBS_BUDG        = BUDG;
+
+OBS_L_CPI       = L_CPI;
+OBS_L_CPI_core  = L_CPI_core;
+%OBS_L_CPI_vol  = L_CPI_vol;
+OBS_D4_L_CPI_tar= D4_L_CPI_tar;
+
+OBS_KR          = KR;
+OBS_I_m         = I_m;
+
+OBS_L_S         = L_S;
+OBS_w_cc        = w_cc;
+
+OBS_L_Poil      = L_Poil; 
+
+OBS_L_GDP_f_gap = L_GDP_f_gap;
+OBS_D_L_CPI_f   = D_L_CPI_f;
+OBS_NR_f        = NR_f;
+
+
+%% ------------------------------------------------------------------------------- %
+
+
+Legend
+_gap        cyclical deviation from a trend
+_bar        trend (equilibrium)
+ss_         value in steady-state 
+D_L_        q-o-q change in annual term
+D4_L_       y-o-y change  
+_f          foreign sector
+shk_        shock or errors
